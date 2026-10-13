@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0A0D1A" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EEF1FB" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="מה אוכלים?">
+<meta name="description" content="מאגר מנות עתירות קלוריות מהמצרכים שיש בבית, לעלייה במשקל.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>מה אוכלים? מאגר מנות לעלייה במשקל</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+  href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+  :root{
+    --scale:1;
+    --bg:#0A0D1A;
+    --panel:rgba(255,255,255,.06); --panel-hover:rgba(255,255,255,.1); --hero-bg:#121838;
+    --border:rgba(160,175,255,.24);
+    --text:#EEF1FF; --muted:#B4BCE0;
+    --track:rgba(255,255,255,.13);
+    --c-breakfast:#FFB547; --c-main:#FF6FA3; --c-light:#2DE2E6; --c-shakes:#A78BFA; --c-all:#C7D2FE; --c-fav:#FF6FA3;
+    --ok:#2DE2B0; --on-ok:#04231B; --ok-soft:rgba(45,226,176,.14);
+    --btn-a:#6D28D9; --btn-b:#A21CAF; --on-btn:#FFFFFF; --glow:rgba(139,92,246,.55);
+    --pink-a:#BE185D; --pink-b:#9D174D;
+    --focus:#7DD3FC;
+    --aurora1:rgba(139,92,246,.30); --aurora2:rgba(45,226,230,.15);
+    --glass-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+    --nav-bg:rgba(10,13,26,.86); --nav-on:rgba(139,92,246,.24); --nav-ico:#C4B5FD;
+    --font:"Rubik","Heebo","Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    --num:"Space Grotesk","Rubik",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#EEF1FB;
+      --panel:rgba(255,255,255,.78); --panel-hover:#FFFFFF; --hero-bg:#FFFFFF;
+      --border:rgba(40,50,120,.18);
+      --text:#121634; --muted:#474F7D;
+      --track:rgba(18,22,52,.11);
+      --c-breakfast:#B45309; --c-main:#BE185D; --c-light:#0E7490; --c-shakes:#6D28D9; --c-all:#3730A3; --c-fav:#BE185D;
+      --ok:#0F7A5A; --on-ok:#FFFFFF; --ok-soft:rgba(15,122,90,.12);
+      --focus:#1D4ED8;
+      --aurora1:rgba(139,92,246,.20); --aurora2:rgba(45,226,230,.22);
+      --glass-shadow:0 8px 26px -10px rgba(40,50,120,.22);
+      --nav-bg:rgba(238,241,251,.9); --nav-on:rgba(109,40,217,.12); --nav-ico:#6D28D9;
+    }
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{font-size:calc(18px * var(--scale)); -webkit-text-size-adjust:100%; overscroll-behavior-y:contain;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.55;}
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(70% 42% at 88% -8%, var(--aurora1), transparent 70%),
+      radial-gradient(60% 38% at -12% 24%, var(--aurora2), transparent 70%);
+  }
+  a{color:inherit;}
+  button,select,input{font:inherit; color:inherit;}
+  :focus-visible{outline:3px solid var(--focus); outline-offset:3px; border-radius:12px;}
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  .ico{width:1.4em; height:1.4em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto;}
+  .ico.fill{fill:currentColor;}
+
+  .c-breakfast{--c:var(--c-breakfast);} .c-main{--c:var(--c-main);} .c-light{--c:var(--c-light);}
+  .c-shakes{--c:var(--c-shakes);} .c-all{--c:var(--c-all);} .c-fav{--c:var(--c-fav);}
+  .chip{
+    width:3.2rem; height:3.2rem; border-radius:16px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
+    color:var(--c); background:rgba(255,255,255,.08); background:color-mix(in srgb, var(--c) 17%, transparent);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent);
+  }
+  .chip .ico{width:1.7rem; height:1.7rem;}
+
+  .glass{background:var(--panel); border:1px solid var(--border); box-shadow:var(--glass-shadow);}
+
+  .app{max-width:640px; margin:0 auto; padding:0 max(1rem, env(safe-area-inset-right)) calc(6.2rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));}
+
+  /* ---------- Top bar ---------- */
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:max(.75rem, env(safe-area-inset-top)) 0 .5rem;}
+  .brand{font-weight:800; font-size:1.05rem; text-decoration:none; min-height:48px; display:inline-flex; align-items:center; gap:.5rem;}
+  .brand .ico{width:1.8rem; height:1.8rem; stroke:url(#charge);}
+  .size{display:flex; border-radius:14px; overflow:hidden;}
+  .size button{min-width:48px; min-height:48px; border:0; background:transparent; font-weight:700; cursor:pointer; line-height:1; font-family:var(--font);}
+  .size button + button{border-inline-start:1px solid var(--border);}
+  .size button[aria-pressed="true"]{background:linear-gradient(135deg,var(--btn-a),var(--btn-b)); color:var(--on-btn);}
+
+  /* ---------- Titles ---------- */
+  h1.screen-title{font-size:1.9rem; line-height:1.2; margin:.5rem 0 .35rem; font-weight:800; letter-spacing:-.01em;}
+  h1.screen-title:focus{outline:none;}
+  h1.with-ico{display:flex; align-items:center; gap:.8rem;}
+  h2{font-size:1.3rem; margin:1.7rem 0 .6rem; font-weight:800;}
+  h2 small{font-weight:400; font-size:.85rem; color:var(--muted);}
+  .lead{color:var(--muted); margin:0 0 1.1rem; font-size:1rem;}
+  .note{color:var(--muted); font-size:.85rem; margin:1.2rem 0 0;}
+
+  /* ---------- Hero (recommendation) ---------- */
+  .hero{
+    border:1.5px solid transparent; border-radius:28px; padding:1.15rem; margin:0 0 1rem;
+    background:linear-gradient(var(--hero-bg),var(--hero-bg)) padding-box,
+               linear-gradient(135deg,#2DE2E6,#8B5CF6 45%,#FF4D8D 75%,#FFB547) border-box;
+    box-shadow:0 14px 40px -16px var(--glow);
+  }
+  .hero-why{margin:0 0 .5rem; color:var(--muted); font-size:.92rem; font-weight:500;}
+  .hero-top{display:flex; align-items:center; justify-content:space-between; gap:1rem;}
+  .hero-text{flex:1; min-width:0; display:flex; flex-direction:column; gap:.6rem; align-items:flex-start;}
+  .hero-name{margin:0; font-size:1.45rem; line-height:1.25; font-weight:800;}
+  .hero-name a{text-decoration:none;}
+  .hero-actions{display:flex; gap:.6rem; margin-top:1.1rem; flex-wrap:wrap;}
+  .hero-actions .btn{flex:1 1 9rem;}
+  .xl .hero-top{flex-direction:column-reverse; align-items:stretch;}
+  .xl .ring{align-self:center;}
+
+  /* ---------- Energy ring + meter (the one bold element) ---------- */
+  .ring{position:relative; width:var(--s,6.6rem); height:var(--s,6.6rem); flex:0 0 auto;}
+  .ring svg{width:100%; height:100%; transform:rotate(-90deg); overflow:visible;}
+  .ring .bg{stroke:var(--track);}
+  .ring .fg{stroke:url(#charge); stroke-dasharray:264; stroke-dashoffset:var(--off); animation:ringdraw .9s cubic-bezier(.2,.8,.2,1) both;}
+  @keyframes ringdraw{from{stroke-dashoffset:264;}}
+  .ring-num{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;}
+  .ring-num b{font-family:var(--num); font-weight:700; font-size:var(--nb,1.6rem); font-variant-numeric:tabular-nums;}
+  .ring-num small{font-size:.72rem; color:var(--muted); margin-top:.2rem;}
+  .meter{height:.5rem; border-radius:999px; background:var(--track); overflow:hidden; flex:1; min-width:3rem;}
+  .meter i{display:block; height:100%; width:calc(var(--w) * 1%); border-radius:999px;
+    background:linear-gradient(to left,#2DE2E6,#8B5CF6,#FF4D8D,#FFB547);
+    background-size:calc(10000% / var(--w)) 100%; background-position:right center;}
+  .energy{display:flex; align-items:center; gap:.7rem;}
+  .kcal{font-size:.85rem; color:var(--muted); white-space:nowrap;}
+  .kcal b{font-family:var(--num); font-weight:700; font-size:1.2rem; color:var(--text); font-variant-numeric:tabular-nums; margin-inline-end:.2rem;}
+
+  /* ---------- Home tiles ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin:0 0 1rem;}
+  .tile{
+    display:flex; flex-direction:column; align-items:flex-start; gap:.25rem; min-height:9.6rem; padding:1rem;
+    border-radius:24px; text-decoration:none; transition:background .15s;
+  }
+  .tile:active{transform:scale(.985);}
+  .tile .t{font-weight:800; font-size:1.12rem; line-height:1.25; margin-top:.5rem;}
+  .tile .h{color:var(--muted); font-size:.88rem; line-height:1.35;}
+  .tile .n{margin-top:auto; padding-top:.5rem; font-weight:700; font-size:.92rem; color:var(--c);}
+  .tile.wide{grid-column:1 / -1; flex-direction:row; align-items:center; min-height:4.8rem; gap:1rem; border-radius:20px;}
+  .tile.wide .t{margin:0; flex:1;}
+  .tile.wide .n{margin:0; padding:0;}
+  .xl .tiles{grid-template-columns:minmax(0,1fr);}
+  .xl .tile{min-height:0;}
+
+  .searchbox{display:flex; gap:.6rem; margin-top:.4rem;}
+  .searchbox input{flex:1; min-width:0;}
+
+  /* ---------- Controls ---------- */
+  .field{display:block; width:100%; min-height:3.2rem; padding:.6rem 1rem; border-radius:16px; border:1px solid var(--border);
+    background:var(--panel); font-size:1rem; font-family:var(--font);}
+  select.field{appearance:auto;}
+  .field::placeholder{color:var(--muted); opacity:1;}
+  label.lbl{display:block; font-weight:700; margin:0 0 .3rem; font-size:.95rem;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:.55rem; min-height:3.2rem; padding:.5rem 1.1rem;
+    border-radius:16px; border:1px solid var(--border); background:var(--panel); font-weight:700; font-size:1rem; cursor:pointer;
+    text-decoration:none; font-family:var(--font);
+  }
+  .btn.primary{background:linear-gradient(135deg,var(--btn-a),var(--btn-b)); border-color:transparent; color:var(--on-btn); box-shadow:0 8px 24px -8px var(--glow);}
+  .btn.block{display:flex; width:100%;}
+  .btn[aria-pressed="true"]:not(.fav){background:linear-gradient(135deg,var(--btn-a),var(--btn-b)); border-color:transparent; color:var(--on-btn);}
+  .btn.fav[aria-pressed="true"]{background:linear-gradient(135deg,var(--pink-a),var(--pink-b)); border-color:transparent; color:#fff;}
+  .filters{display:grid; gap:.8rem; margin:.4rem 0 1rem;}
+
+  /* ---------- Cards ---------- */
+  .count{color:var(--muted); font-weight:700; margin:.2rem 0 .7rem; font-size:.95rem;}
+  .cards{display:grid; grid-template-columns:minmax(0,1fr); gap:.75rem; list-style:none; padding:0; margin:0;}
+  .card{position:relative; border-radius:22px;}
+  .card-link{display:flex; gap:.9rem; align-items:center; padding:1rem 1rem 1rem 3.4rem; text-decoration:none; border-radius:20px; min-height:5.6rem;}
+  .card-link .info{display:flex; flex-direction:column; gap:.4rem; min-width:0; flex:1;}
+  .card-link .name{font-weight:800; font-size:1.1rem; line-height:1.3;}
+  .card-link .ings{color:var(--muted); font-size:.88rem; line-height:1.35;}
+  .pill{display:inline-flex; align-items:center; gap:.3rem; padding:.1rem .65rem; border-radius:999px; background:var(--track);
+    font-weight:600; font-size:.85rem; white-space:nowrap;}
+  .pill .ico{width:1em; height:1em;}
+  .meta{display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;}
+  .heart{
+    position:absolute; top:.3rem; left:.2rem; width:3rem; height:3rem; border-radius:50%; border:0; background:transparent;
+    cursor:pointer; color:var(--muted); display:flex; align-items:center; justify-content:center;
+  }
+  .heart .ico{width:1.55rem; height:1.55rem;}
+  .heart[aria-pressed="true"]{color:var(--c-fav);}
+  .empty{border:1px dashed var(--border); border-radius:22px; padding:1.4rem 1.2rem; text-align:center; background:var(--panel);}
+  .empty p{margin:0 0 1rem; font-size:1.05rem;}
+
+  /* ---------- Recipe ---------- */
+  .back{display:inline-flex; align-items:center; gap:.5rem; min-height:3rem; padding:0 1.1rem; border-radius:16px; font-weight:700; text-decoration:none; font-size:1rem;}
+  .back .ico{width:1.15em; height:1.15em;}
+  .rhero{display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:1.1rem 0 .3rem;}
+  .rhero .txt{flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:.7rem;}
+  .rhero h1{margin:0;}
+  .rhero .ring{--s:7.6rem; --nb:2rem;}
+  .xl .rhero{flex-direction:column-reverse; align-items:stretch;}
+  .xl .rhero .ring{align-self:center;}
+  .scale{display:flex; align-items:center; gap:.7rem; margin-top:.9rem; color:var(--muted); font-size:.82rem;}
+
+  .checklist{list-style:none; padding:0; margin:0; display:grid; gap:.5rem;}
+  .check{
+    display:flex; align-items:center; gap:.85rem; min-height:3.5rem; padding:.55rem .9rem; cursor:pointer;
+    background:var(--panel); border:1px solid var(--border); border-radius:18px; font-size:1.05rem;
+  }
+  .check input{position:absolute; opacity:0; width:1px; height:1px;}
+  .check .box{flex:0 0 auto; width:1.85rem; height:1.85rem; border-radius:9px; border:2px solid var(--muted); display:flex; align-items:center; justify-content:center; color:transparent;}
+  .check .box .ico{width:1.2rem; height:1.2rem; stroke-width:3;}
+  .check .num{
+    flex:0 0 auto; width:2.2rem; height:2.2rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--num); font-weight:700; font-size:1.05rem; color:var(--on-btn);
+    background:linear-gradient(135deg,var(--btn-a),var(--btn-b));
+  }
+  .check .txt{flex:1; line-height:1.5;}
+  .check:has(input:checked){background:var(--ok-soft); border-color:var(--ok);}
+  .check:has(input:checked) .box{background:var(--ok); border-color:var(--ok); color:var(--on-ok);}
+  .check:has(input:checked) .num{background:var(--ok); color:var(--on-ok);}
+  .check:has(input:checked) .txt{color:var(--muted); text-decoration:line-through; text-decoration-thickness:2px;}
+  .check:has(input:focus-visible){outline:3px solid var(--focus); outline-offset:3px;}
+  .steps .check{align-items:flex-start;}
+  .steps .num{margin-top:.1rem;}
+
+  .tip{display:flex; gap:.8rem; border-radius:20px; padding:1rem; margin-top:1.4rem; font-size:1rem;}
+  .tip .ico{color:var(--c-breakfast); width:1.6rem; height:1.6rem;}
+  .done{display:flex; align-items:center; justify-content:center; gap:.6rem; background:var(--ok-soft); border:1px solid var(--ok); border-radius:20px;
+    padding:1rem; margin-top:1rem; font-weight:800; font-size:1.15rem;}
+  .done .ico{color:var(--ok); stroke-width:3;}
+  .actions{display:grid; gap:.7rem; margin-top:1.4rem;}
+
+  /* ---------- Touch + mobile ---------- */
+  a,button,select,input,label{touch-action:manipulation;}
+  .btn,.tile,.card,.check,.heart,.size button,.navitem,.back{-webkit-user-select:none; user-select:none; -webkit-touch-callout:none;}
+  @media (hover:hover) and (pointer:fine){
+    .tile:hover,.btn:hover,.card:hover{background:var(--panel-hover);}
+  }
+  .btn:active,.back:active{transform:scale(.98);}
+  .card:active,.check:active{background:var(--panel-hover);}
+  .navbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--nav-bg); border-top:1px solid var(--border);
+    -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
+    padding:.4rem max(.75rem, env(safe-area-inset-right)) calc(.4rem + env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left));
+  }
+  .navbar-inner{max-width:640px; margin:0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.4rem;}
+  .navitem{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.15rem; min-height:3.6rem; border-radius:16px;
+    text-decoration:none; color:var(--muted); font-size:.78rem; font-weight:600; line-height:1.2;}
+  .navitem .ico{width:1.5rem; height:1.5rem;}
+  .navitem[aria-current="page"]{color:var(--text); background:var(--nav-on);}
+  .navitem[aria-current="page"] .ico{color:var(--nav-ico);}
+  body.kb .navbar{display:none;}
+  .awake{display:flex; align-items:center; gap:.5rem; color:var(--muted); font-size:.85rem; margin:.5rem 0 0;}
+  .awake[hidden]{display:none;}
+  .awake .ico{width:1.1em; height:1.1em; color:var(--c-breakfast);}
+  .install{display:flex; flex-direction:column; gap:.7rem; border-radius:22px; padding:1rem; margin:0 0 1rem; font-size:1rem;}
+  .install[hidden]{display:none;}
+  .install p{margin:0;}
+  .install .row{display:flex; gap:.6rem; flex-wrap:wrap;}
+  .install .row .btn{flex:1 1 8rem;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+    .tile:active{transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="charge" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#2DE2E6"/>
+      <stop offset=".45" stop-color="#8B5CF6"/>
+      <stop offset=".75" stop-color="#FF4D8D"/>
+      <stop offset="1" stop-color="#FFB547"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="app">
+  <div class="topbar">
+    <a class="brand" href="#/">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M13 5.5 8.5 13h3.5l-1 5.5 4.5-7.500H12z"/></svg>
+      מה אוכלים?
+    </a>
+    <div class="size glass" role="group" aria-label="גודל כתב">
+      <button type="button" data-size="0" aria-label="כתב רגיל" style="font-size:15px">א</button>
+      <button type="button" data-size="1" aria-label="כתב גדול" style="font-size:20px">א</button>
+      <button type="button" data-size="2" aria-label="כתב גדול מאוד" style="font-size:26px">א</button>
+    </div>
+  </div>
+  <main id="app" aria-live="polite"></main>
+</div>
+<nav class="navbar" id="nav" aria-label="ניווט ראשי"><div class="navbar-inner" id="navInner"></div></nav>
+<noscript><p style="padding:1rem">האפליקציה דורשת הפעלת JavaScript.</p></noscript>
+
+<script>
+/* ======================= נתונים ======================= */
+const recipes = [
+  /* ---------- ארוחות בוקר ---------- */
+  { id:1, name:"שקשוקה עם גבינה ולחם", cal:800, time:"20 דק׳", cat:"ארוחות בוקר",
+    tags:["ביצים","גבינה","לחם"],
+    ing:["3 ביצים","2 כפות שמן","בצל קצוץ ושום","רסק עגבניות + קצת מים (או עגבניות מרוסקות)","מלח, פלפל, פפריקה","40 גרם גבינה צהובה מגוררת","2 פרוסות לחם להגשה"],
+    steps:["מטגנים בצל ושום בשמן עד שמזהיב.","מוסיפים רסק עגבניות, מים ותבלינים ומבשלים 8 דקות.","יוצרים גומחות ושוברים לתוכן את הביצים. מכסים ומבשלים עד שהחלבון מוצק.","מפזרים גבינה מגוררת ומגישים עם לחם."],
+    tip:"שמן נדיב ולחם לטבול בו הם מה שהופך שקשוקה למנה של 800 קלוריות." },
+  { id:2, name:"חביתה במילוי גבינה ונקניק", cal:800, time:"10 דק׳", cat:"ארוחות בוקר",
+    tags:["ביצים","גבינה","נקניק","לחם"],
+    ing:["3 ביצים","50 גרם גבינה צהובה","40 גרם נקניק פרוס","1 כף שמן או חמאה","2 פרוסות לחם"],
+    steps:["טורפים ביצים עם קורט מלח.","מחממים שמן במחבת ושופכים את הביצים.","כשהחביתה כמעט מוכנה מניחים גבינה ונקניק על חצי ממנה וסוגרים.","מגישים עם לחם."],
+    tip:"חמאה במקום שמן נותנת טעם עשיר יותר." },
+  { id:3, name:"פרנץ׳ טוסט עם ממרח שוקולד", cal:800, time:"15 דק׳", cat:"ארוחות בוקר",
+    tags:["לחם","ביצים","חלב","ממרח שוקולד"],
+    ing:["4 פרוסות לחם","2 ביצים","1/2 כוס חלב","1 כף סוכר וקינמון (אופציונלי)","1 כף חמאה","2 כפות ממרח שוקולד"],
+    steps:["טורפים ביצים, חלב, סוכר וקינמון.","טובלים כל פרוסה בתערובת משני הצדדים.","מטגנים בחמאה עד שחום זהוב.","מורחים ממרח שוקולד על הפרוסות החמות."],
+    tip:"אפשר להכין גם בלי שוקולד, עם דבש או סילאן." },
+  { id:4, name:"פנקייקים עם ממרח שוקולד", cal:700, time:"20 דק׳", cat:"ארוחות בוקר",
+    tags:["ביצים","חלב","ממרח שוקולד"],
+    ing:["1 כוס קמח","2 ביצים","1 כוס חלב","1 כף סוכר","1 כפית אבקת אפייה","שמן למחבת","2 כפות ממרח שוקולד"],
+    steps:["מערבבים את כל המרכיבים לבלילה חלקה.","יוצקים כפות בלילה למחבת משומנת.","הופכים כשמופיעות בועות ומטגנים עוד דקה.","מגישים 4-5 פנקייקים עם ממרח שוקולד."],
+    tip:"אפשר להכין כמות כפולה ולהקפיא. מחממים בטוסטר." },
+  { id:5, name:"דייסת שיבולת שועל בחלב עם שוקולד", cal:650, time:"8 דק׳", cat:"ארוחות בוקר",
+    tags:["דגנים","חלב","ממרח שוקולד"],
+    ing:["3/4 כוס שיבולת שועל","1.5 כוס חלב מלא","1 כפית סוכר","1.5 כפות ממרח שוקולד"],
+    steps:["מבשלים שיבולת שועל בחלב על אש נמוכה תוך ערבוב עד שהדייסה סמיכה.","מעבירים לקערה ומערבבים פנימה ממרח שוקולד."],
+    tip:"חלב מלא ולא מופחת. זה עוד כ־70 קלוריות לקערה." },
+  { id:6, name:"ביצת עין בלחם עם גבינה", cal:480, time:"8 דק׳", cat:"ארוחות בוקר",
+    tags:["ביצים","לחם","גבינה"],
+    ing:["2 פרוסות לחם","2 ביצים","חמאה","30 גרם גבינה צהובה"],
+    steps:["חותכים חור עגול באמצע כל פרוסה.","ממיסים חמאה במחבת, מניחים את הלחם ושוברים ביצה לכל חור.","מטגנים עד שהתחתית זהובה, הופכים ומניחים גבינה מעל עד שנמסה."],
+    tip:"אפשר להוסיף פרוסת נקניק מטוגן בצד." },
+
+  /* ---------- ארוחות עיקריות ---------- */
+  { id:10, name:"מק אנד צ׳יז אפוי", cal:950, time:"30 דק׳", cat:"ארוחות עיקריות",
+    tags:["פסטה","גבינה","חלב"],
+    ing:["120 גרם פסטה","1 כף חמאה + 1 כף קמח","3/4 כוס חלב","100 גרם גבינה צהובה מגוררת","מלח, פלפל, קורט אגוז מוסקט"],
+    steps:["מבשלים פסטה ומסננים.","בסיר ממיסים חמאה, מוסיפים קמח ומערבבים דקה, מוסיפים חלב בהדרגה עד רוטב סמיך.","מכניסים 3/4 מהגבינה עד שנמסה.","מערבבים עם הפסטה, מעבירים לתבנית, מפזרים את שאר הגבינה ואופים ב־200 מעלות כ־12 דקות."],
+    tip:"אפשר לדלג על האפייה ולאכול ישר מהסיר." },
+  { id:11, name:"פסטה אלפרדו עם חזה עוף", cal:950, time:"25 דק׳", cat:"ארוחות עיקריות",
+    tags:["חזה עוף","פסטה","גבינה","חלב"],
+    ing:["120 גרם פסטה","150 גרם חזה עוף חתוך לרצועות","1 כף חמאה + 1 כפית קמח","1/2 כוס חלב","50 גרם גבינה צהובה מגוררת","שום, מלח, פלפל"],
+    steps:["מבשלים פסטה.","מטגנים חזה עוף עם שום ומלח עד מוכן ומזהיב.","במחבת נפרדת ממיסים חמאה, מוסיפים קמח וחלב ומבשלים לרוטב. מוסיפים גבינה עד שנמסה.","מערבבים פסטה, עוף ורוטב."],
+    tip:"פלפל שחור גרוס בסוף נותן טעם של מסעדה." },
+  { id:12, name:"פסטה בולונז", cal:1000, time:"35 דק׳", cat:"ארוחות עיקריות",
+    tags:["בשר טחון","פסטה","גבינה"],
+    ing:["120 גרם פסטה","200 גרם בשר טחון","בצל ושום","3 כפות רסק עגבניות + 1/2 כוס מים","1 כף שמן זית","גבינה מגוררת להגשה","מלח, פלפל, אורגנו"],
+    steps:["מטגנים בצל ושום בשמן, מוסיפים בשר ומפוררים עד השחמה.","מוסיפים רסק, מים ותבלינים ומבשלים 15-20 דקות על אש נמוכה.","מערבבים עם הפסטה ומפזרים גבינה."],
+    tip:"כף שמן זית בסוף הבישול מוסיפה כ־120 קלוריות בלי לשנות טעם." },
+  { id:13, name:"קציצות בשר ברוטב עגבניות עם פסטה", cal:900, time:"35 דק׳", cat:"ארוחות עיקריות",
+    tags:["בשר טחון","פסטה","ביצים"],
+    ing:["200 גרם בשר טחון","1 ביצה","2 כפות פירורי לחם","בצל קצוץ, מלח, פלפל, כמון","רסק עגבניות + מים","100 גרם פסטה"],
+    steps:["מערבבים בשר, ביצה, פירורי לחם ותבלינים ומגלגלים קציצות.","מטגנים משני הצדדים עד שחום.","מוסיפים רסק מדולל במים ומבשלים 15 דקות.","מגישים על פסטה."],
+    tip:"אפשר להכין כפול ולהקפיא קציצות ברוטב." },
+  { id:14, name:"המבורגר ביתי עם גבינה", cal:850, time:"20 דק׳", cat:"ארוחות עיקריות",
+    tags:["בשר טחון","גבינה","לחם"],
+    ing:["200 גרם בשר טחון","מלח, פלפל, אבקת שום","2 פרוסות גבינה צהובה","לחמנייה או 2 פרוסות לחם","1 כף מיונז או קטשופ","שמן למחבת"],
+    steps:["מעצבים קציצה שטוחה ומתבלים.","מטגנים במחבת חמה 4 דקות מכל צד, מניחים גבינה בסוף עד שנמסה.","קולים את הלחם ומורחים רוטב.","מרכיבים את ההמבורגר."],
+    tip:"בשר עם שומן של כ־20% נותן יותר טעם וקלוריות." },
+  { id:15, name:"שניצל בלחם עם טחינה", cal:850, time:"15 דק׳", cat:"ארוחות עיקריות",
+    tags:["שניצל","טחינה","לחם"],
+    ing:["2 שניצלים","2 כפות טחינה + מים ולימון","פיתה או 2 פרוסות לחם","עגבנייה ומלפפון אם יש"],
+    steps:["מטגנים או אופים את השניצלים.","מדללים טחינה עם מים, לימון ומלח עד רוטב חלק.","מרכיבים בפיתה או בלחם: שניצל, טחינה וירקות."],
+    tip:"שילוב ישראלי קלאסי שגם קל להכין וגם נכנס כארוחה מלאה." },
+  { id:16, name:"פתיתים ברוטב עגבניות ובשר טחון", cal:850, time:"25 דק׳", cat:"ארוחות עיקריות",
+    tags:["פתיתים","בשר טחון"],
+    ing:["3/4 כוס פתיתים","150 גרם בשר טחון","בצל ושום","2 כפות רסק עגבניות","1.5 כוס מים","שמן, מלח, פפריקה"],
+    steps:["מטגנים בצל בשמן, מוסיפים בשר ומשחימים.","מוסיפים פתיתים ומטגנים דקה, מוסיפים רסק, מים ותבלינים.","מבשלים מכוסה על אש נמוכה כ־10 דקות עד שהנוזלים נספגים."],
+    tip:"מנה בסיר אחד שהיא גם משביעה וגם קלה לניקוי." },
+  { id:17, name:"פתיתים בחמאה וגבינה", cal:800, time:"15 דק׳", cat:"ארוחות עיקריות",
+    tags:["פתיתים","גבינה","חלב"],
+    ing:["3/4 כוס פתיתים","1 כף חמאה","1.5 כוס מים","שפריץ חלב","60 גרם גבינה צהובה"],
+    steps:["מטגנים פתיתים בחמאה דקה.","מוסיפים מים ומלח ומבשלים 8-10 דקות עד שנספג.","מוסיפים חלב וגבינה ומערבבים עד שהגבינה נמסה."],
+    tip:"אוכל נחמה פשוט שמתאים גם כשאין חשק לאכול הרבה." },
+  { id:18, name:"חזה עוף ברוטב טחינה עם לחם", cal:850, time:"20 דק׳", cat:"ארוחות עיקריות",
+    tags:["חזה עוף","טחינה","לחם"],
+    ing:["200 גרם חזה עוף פרוס","2 כפות שמן","3 כפות טחינה גולמית","מים, לימון, שום, מלח","2 פרוסות לחם או פיתה"],
+    steps:["מטגנים חזה עוף בשמן עם שום ותבלינים עד שמזהיב.","מכינים רוטב: טחינה, מים, לימון ושום עד חלק.","יוצקים על העוף ומגישים עם לחם."],
+    tip:"רוטב טחינה מוסיף כ־270 קלוריות למנה." },
+  { id:19, name:"פסטה ברוטב עגבניות ונקניק מטוגן", cal:850, time:"20 דק׳", cat:"ארוחות עיקריות",
+    tags:["פסטה","נקניק","גבינה"],
+    ing:["120 גרם פסטה","60 גרם נקניק פרוס חתוך לרצועות","1 כף שמן","שום","3 כפות רסק עגבניות + מים","40 גרם גבינה מגוררת"],
+    steps:["מבשלים פסטה.","מטגנים נקניק בשמן עד שמתפצפץ קלות, מוסיפים שום ורסק עם מים ומבשלים 5 דקות.","מערבבים עם הפסטה ומפזרים גבינה."],
+    tip:"הנקניק המטוגן הופך רוטב רגיל לרוטב עמוק וטעים." },
+  { id:20, name:"פסטה עם טונה ועגבניות", cal:800, time:"20 דק׳", cat:"ארוחות עיקריות",
+    tags:["פסטה","טונה"],
+    ing:["120 גרם פסטה","1 קופסת טונה בשמן","1 כף שמן זית","שום","3 כפות רסק עגבניות + מים","פלפל חריף (אופציונלי)"],
+    steps:["מבשלים פסטה.","מטגנים שום בשמן זית, מוסיפים רסק ומים ומבשלים 5 דקות.","מוסיפים טונה עם הנוזלים ומחממים דקה.","מערבבים עם הפסטה."],
+    tip:"משאירים את שמן הטונה בתבשיל. זה טעם וקלוריות." },
+  { id:21, name:"פשטידת פסטה וגבינה", cal:650, time:"35 דק׳", cat:"ארוחות עיקריות",
+    tags:["פסטה","ביצים","גבינה","חלב","נקניק"],
+    ing:["100 גרם פסטה מבושלת","3 ביצים","1/2 כוס חלב","80 גרם גבינה מגוררת","נקניק קצוץ (אופציונלי)","מלח ופלפל"],
+    steps:["מערבבים ביצים, חלב ותבלינים.","מערבבים עם הפסטה, חצי מהגבינה ונקניק ומעבירים לתבנית משומנת.","מפזרים את שאר הגבינה ואופים ב־180 מעלות כ־25 דקות.","התבנית מספיקה ל־2 מנות. אפשר להקפיא."],
+    tip:"פתרון טוב לשאריות פסטה מאתמול." },
+
+  /* ---------- ארוחות קלות ---------- */
+  { id:30, name:"טוסט נקניק וגבינה", cal:550, time:"8 דק׳", cat:"ארוחות קלות",
+    tags:["נקניק","גבינה","לחם"],
+    ing:["2 פרוסות לחם","40 גרם נקניק פרוס","2 פרוסות גבינה צהובה","חמאה למריחה מבחוץ"],
+    steps:["מורחים חמאה על החלק החיצוני של הלחם.","מניחים נקניק וגבינה בפנים.","מטגנים במחבת משני הצדדים עד שהגבינה נמסה."],
+    tip:"טוסטר כריכים עובד גם כן." },
+  { id:31, name:"טוסט טונה מלט", cal:700, time:"10 דק׳", cat:"ארוחות קלות",
+    tags:["טונה","גבינה","לחם"],
+    ing:["1 קופסת טונה מסוננת חלקית","1 כף מיונז","2 פרוסות לחם","2 פרוסות גבינה צהובה","חמאה"],
+    steps:["מערבבים טונה עם מיונז, מלח ופלפל.","מורחים על לחם ומניחים גבינה.","מטגנים עם חמאה משני הצדדים עד שהגבינה נמסה."],
+    tip:"אפשר להוסיף ביצה קשה קצוצה לתערובת." },
+  { id:32, name:"פיצה מלחם", cal:750, time:"15 דק׳", cat:"ארוחות קלות",
+    tags:["לחם","גבינה","נקניק"],
+    ing:["3 פרוסות לחם עבות","3 כפות רסק עגבניות + אורגנו","80 גרם גבינה מגוררת","40 גרם נקניק","מעט שמן זית"],
+    steps:["מורחים רסק על הלחם ומתבלים באורגנו.","מפזרים גבינה ונקניק.","אופים ב־200 מעלות 8-10 דקות או מכינים בטוסטר אובן."],
+    tip:"אפשר להכין בכמות ולהקפיא." },
+  { id:33, name:"לחם עם טחינה וסילאן", cal:400, time:"3 דק׳", cat:"ארוחות קלות",
+    tags:["לחם","טחינה"],
+    ing:["2 פרוסות לחם","2 כפות טחינה גולמית","1 כף סילאן או דבש"],
+    steps:["מורחים טחינה על הלחם.","מזלפים סילאן או דבש מעל."],
+    tip:"שילוב מוכר ופשוט. מתאים לנשנוש בין ארוחות." },
+
+  /* ---------- שייקים ---------- */
+  { id:40, name:"שייק שוקולד וחלב", cal:600, time:"5 דק׳", cat:"שייקים",
+    tags:["חלב","ממרח שוקולד","דגנים"],
+    ing:["2 כוסות חלב מלא","2 כפות ממרח שוקולד","3 כפות שיבולת שועל","קרח (אופציונלי)"],
+    steps:["טוחנים הכל בבלנדר עד אחיד."],
+    tip:"לפני השינה זו דרך קלה להוסיף כ־600 קלוריות בלי להרגיש שבע." },
+  { id:41, name:"שייק חמאת בוטנים", cal:650, time:"5 דק׳", cat:"שייקים",
+    tags:["חלב","דגנים"],
+    ing:["2 כוסות חלב מלא","2 כפות חמאת בוטנים","3 כפות שיבולת שועל","1 כף דבש","קרח"],
+    steps:["טוחנים הכל בבלנדר."],
+    tip:"אם יש בננה בבית, כדאי להוסיף אחת." }
+];
+
+const CATS = [
+  { key:"breakfast", name:"ארוחות בוקר",   icon:"sun",   hint:"שקשוקה, חביתה, פנקייקים" },
+  { key:"main",      name:"ארוחות עיקריות", icon:"plate", hint:"פסטה, בשר, עוף, פתיתים" },
+  { key:"light",     name:"ארוחות קלות",    icon:"bolt",  hint:"טוסטים וכריכים מהירים" },
+  { key:"shakes",    name:"שייקים",         icon:"cup",   hint:"שתייה עתירת קלוריות" }
+];
+const INGREDIENTS = ["חזה עוף","בשר טחון","שניצל","נקניק","טונה","ביצים","פסטה","פתיתים","לחם","גבינה","טחינה","חלב","ממרח שוקולד","דגנים"];
+const FAST_MINUTES = 15;
+const METER_MAX = 1000;
+const KCAL = "קק״ל";
+
+/* ======================= אייקונים ======================= */
+const P = {
+  sun:   '<path d="M3 19h18"/><path d="M7 19a5 5 0 0 1 10 0"/><path d="M12 5v3M5.2 9.2l1.8 1.8M18.8 9.2 17 11"/>',
+  plate: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>',
+  bolt:  '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  cup:   '<path d="M7 4h10l-1.4 15.4a2 2 0 0 1-2 1.6h-3.2a2 2 0 0 1-2-1.6z"/><path d="M6.6 9h10.8"/><path d="M13 4l1.2-2.2"/>',
+  grid:  '<rect x="3" y="3" width="7.500" height="7.500" rx="2"/><rect x="13.500" y="3" width="7.500" height="7.500" rx="2"/><rect x="3" y="13.500" width="7.500" height="7.500" rx="2"/><rect x="13.500" y="13.500" width="7.500" height="7.500" rx="2"/>',
+  heart: '<path d="M12 20.500s-7.500-4.600-7.500-10.200A4.300 4.300 0 0 1 12 7.600a4.300 4.300 0 0 1 7.500 2.700c0 5.600-7.500 10.200-7.500 10.200z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5.200l3.200 2"/>',
+  back:  '<path d="M4.500 12h15"/><path d="M13.500 6l6 6-6 6"/>',
+  check: '<path d="M5 12.500l4.200 4.200L19 7"/>',
+  bulb:  '<path d="M9.500 18h5M10.500 21h3"/><path d="M12 3a6 6 0 0 0-3.600 10.800c.7.600 1.100 1.400 1.100 2.200h5c0-.8.4-1.600 1.100-2.200A6 6 0 0 0 12 3z"/>',
+  home:  '<path d="M3 11.500 12 4l9 7.500"/><path d="M5.500 10v10h13V10"/><path d="M10 20v-5h4v5"/>',
+  share: '<path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>',
+  swap:  '<path d="M4 8h13"/><path d="M13.500 4.500 17 8l-3.500 3.500"/><path d="M20 16H7"/><path d="M10.500 12.500 7 16l3.500 3.500"/>'
+};
+const ico = (n, cls = "") => `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${P[n]}</svg>`;
+const CAT_BY_NAME = Object.fromEntries(CATS.map(c => [c.name, c]));
+const catOf = r => CAT_BY_NAME[r.cat];
+
+/* ======================= מד אנרגיה ======================= */
+const pct = cal => Math.max(12, Math.min(100, Math.round(cal / METER_MAX * 100)));
+function ring(cal, extra = ""){
+  const off = (264 * (1 - Math.min(1, cal / METER_MAX))).toFixed(1);
+  return `<div class="ring" ${extra} role="img" aria-label="${cal} קלוריות מתוך ${METER_MAX} בסולם">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <circle class="bg" cx="50" cy="50" r="42" fill="none" stroke-width="9"/>
+      <circle class="fg" cx="50" cy="50" r="42" fill="none" stroke-width="9" stroke-linecap="round" style="--off:${off}"/>
+    </svg>
+    <div class="ring-num" aria-hidden="true"><b>${cal}</b><small>${KCAL}</small></div>
+  </div>`;
+}
+const meter = cal => `<span class="meter" aria-hidden="true"><i style="--w:${pct(cal)}"></i></span>`;
+
+/* ======================= מצב ======================= */
+const app = document.getElementById('app');
+const state = { query:"", ing:"", fast:false, suggest:0 };
+const checks = {};
+
+let favs = new Set();
+try { favs = new Set(JSON.parse(localStorage.getItem("wg_favs") || "[]")); } catch(e){}
+function saveFavs(){ try { localStorage.setItem("wg_favs", JSON.stringify([...favs])); } catch(e){} }
+
+const SIZES = [1, 1.2, 1.4];
+function applySize(level){
+  document.documentElement.style.setProperty('--scale', SIZES[level]);
+  document.documentElement.classList.toggle('xl', level === 2);
+  document.querySelectorAll('.size button').forEach(b =>
+    b.setAttribute('aria-pressed', String(Number(b.dataset.size) === level)));
+}
+let sizeLevel = 0;
+try { sizeLevel = Math.min(2, Math.max(0, parseInt(localStorage.getItem("wg_size") || "0", 10) || 0)); } catch(e){}
+applySize(sizeLevel);
+document.querySelectorAll('.size button').forEach(b => b.addEventListener('click', () => {
+  sizeLevel = Number(b.dataset.size);
+  applySize(sizeLevel);
+  try { localStorage.setItem("wg_size", String(sizeLevel)); } catch(e){}
+}));
+
+/* ======================= עזרים ======================= */
+const minutes = r => parseInt(r.time, 10) || 0;
+const byId = id => recipes.find(r => r.id === Number(id));
+const catByKey = key => CATS.find(c => c.key === key);
+const countIn = key => key === "all" ? recipes.length : key === "fav" ? favs.size
+  : recipes.filter(r => r.cat === catByKey(key).name).length;
+const heartIco = on => ico("heart", on ? "fill" : "");
+
+function filterRecipes(key){
+  const q = state.query.trim();
+  return recipes.filter(r => {
+    if (key === "fav" && !favs.has(r.id)) return false;
+    if (key !== "all" && key !== "fav" && r.cat !== catByKey(key).name) return false;
+    if (state.ing && !r.tags.includes(state.ing)) return false;
+    if (state.fast && minutes(r) > FAST_MINUTES) return false;
+    if (q && !(r.name.includes(q) || r.tags.some(t => t.includes(q)) || r.ing.some(i => i.includes(q)))) return false;
+    return true;
+  });
+}
+
+function suggestionCat(){
+  const h = new Date().getHours();
+  if (h >= 5 && h < 11) return "ארוחות בוקר";
+  if (h >= 11 && h < 16) return "ארוחות עיקריות";
+  if (h >= 16 && h < 19) return "ארוחות קלות";
+  if (h >= 19 && h < 22) return "ארוחות עיקריות";
+  return "שייקים";
+}
+function pickSuggestion(){
+  const catName = suggestionCat();
+  const pool = recipes.filter(r => r.cat === catName);
+  const day = Math.floor(Date.now() / 86400000);
+  return { catName, recipe: pool[(day + state.suggest) % pool.length] };
+}
+
+function finish(title, focusSelector){
+  document.title = title;
+  window.scrollTo(0, 0);
+  const el = app.querySelector(focusSelector || 'h1');
+  if (el) { el.setAttribute('tabindex', '-1'); el.focus({ preventScroll:true }); }
+}
+
+/* ======================= מסכים ======================= */
+function heroHTML(){
+  const { catName, recipe: r } = pickSuggestion();
+  return `
+    <p class="hero-why">מומלץ לשעה הזו: ${catName}</p>
+    <div class="hero-top">
+      <div class="hero-text">
+        <h2 class="hero-name" id="heroTitle"><a href="#/r/${r.id}">${r.name}</a></h2>
+        <span class="pill">${ico("clock")} ${r.time}</span>
+      </div>
+      ${ring(r.cal)}
+    </div>
+    <div class="hero-actions">
+      <a class="btn primary" href="#/r/${r.id}">פתח מתכון</a>
+      <button type="button" class="btn" id="again">${ico("swap")} הצע אחרת</button>
+    </div>`;
+}
+
+function renderHome(){
+  app.innerHTML = `
+    <h1 class="screen-title">מה בא לך לאכול?</h1>
+    <p class="lead">מנות עתירות קלוריות מהמצרכים שכבר יש בבית.</p>
+
+    <section class="hero" id="hero" aria-labelledby="heroTitle">${heroHTML()}</section>
+
+    <div class="tiles">
+      ${CATS.map(c => `
+        <a class="tile glass c-${c.key}" href="#/list/${c.key}" data-reset>
+          <span class="chip">${ico(c.icon)}</span>
+          <span class="t">${c.name}</span>
+          <span class="h">${c.hint}</span>
+          <span class="n">${countIn(c.key)} מנות</span>
+        </a>`).join('')}
+      <a class="tile wide glass c-all" href="#/list/all" data-reset>
+        <span class="chip">${ico("grid")}</span>
+        <span class="t">כל המנות</span>
+        <span class="n">${recipes.length} מנות</span>
+      </a>
+      <a class="tile wide glass c-fav" href="#/list/fav" data-reset>
+        <span class="chip">${ico("heart")}</span>
+        <span class="t">המועדפים שלי</span>
+        <span class="n">${favs.size} מנות</span>
+      </a>
+    </div>
+
+    <div class="install glass" id="install" hidden></div>
+
+    <form class="searchform" role="search">
+      <label class="lbl" for="homeSearch">חיפוש לפי שם או מרכיב</label>
+      <div class="searchbox">
+        <input class="field" id="homeSearch" type="search" placeholder="למשל: עוף, שקשוקה, פסטה" enterkeyhint="search" autocomplete="off">
+        <button class="btn primary" type="submit">חפש</button>
+      </div>
+    </form>
+    <p class="note">הקלוריות הן הערכה למנה גדולה אחת. המד מלא ב־${METER_MAX} ${KCAL}.</p>
+  `;
+  app.querySelectorAll('[data-reset]').forEach(a => a.addEventListener('click', () => {
+    state.query = ""; state.ing = ""; state.fast = false;
+  }));
+  renderInstall();
+  const hero = app.querySelector('#hero');
+  hero.addEventListener('click', e => {
+    if (!e.target.closest('#again')) return;
+    state.suggest += 1;
+    hero.innerHTML = heroHTML();
+    hero.querySelector('#again').focus();
+  });
+  app.querySelector('.searchform').addEventListener('submit', e => {
+    e.preventDefault();
+    state.query = app.querySelector('#homeSearch').value;
+    state.ing = ""; state.fast = false;
+    location.hash = "#/list/all";
+  });
+  finish("מה אוכלים?");
+}
+
+function cardHTML(r){
+  const fav = favs.has(r.id);
+  const c = catOf(r);
+  return `
+    <li class="card glass c-${c.key}">
+      <a class="card-link" href="#/r/${r.id}">
+        <span class="chip">${ico(c.icon)}</span>
+        <span class="info">
+          <span class="name">${r.name}</span>
+          <span class="energy"><span class="kcal"><b>${r.cal}</b>${KCAL}</span>${meter(r.cal)}</span>
+          <span class="meta"><span class="pill">${ico("clock")} ${r.time}</span></span>
+          <span class="ings">${r.tags.join(', ')}</span>
+        </span>
+      </a>
+      <button type="button" class="heart" data-fav="${r.id}" aria-pressed="${fav}"
+        aria-label="${fav ? 'הסר מהמועדפים' : 'הוסף למועדפים'}: ${r.name}">${heartIco(fav)}</button>
+    </li>`;
+}
+
+function renderList(key){
+  const cat = key === "all" ? { name:"כל המנות", icon:"grid", key:"all" } : key === "fav" ? { name:"המועדפים שלי", icon:"heart", key:"fav" } : catByKey(key);
+  if (!cat) { location.hash = "#/"; return; }
+  app.innerHTML = `
+    <a class="back glass" href="#/">${ico("back")} חזרה</a>
+    <h1 class="screen-title with-ico c-${cat.key}" style="margin-top:1rem"><span class="chip">${ico(cat.icon)}</span> ${cat.name}</h1>
+    <div class="filters">
+      <div>
+        <label class="lbl" for="ingSel">יש לי בבית:</label>
+        <select class="field" id="ingSel">
+          <option value="">הכל (בלי סינון)</option>
+          ${INGREDIENTS.map(i => `<option value="${i}" ${state.ing === i ? 'selected' : ''}>${i}</option>`).join('')}
+        </select>
+      </div>
+      <button type="button" class="btn block" id="fastBtn" aria-pressed="${state.fast}">${ico("bolt")} רק מנות מהירות (עד ${FAST_MINUTES} דקות)</button>
+      <div>
+        <label class="lbl" for="listSearch">חיפוש</label>
+        <input class="field" id="listSearch" type="search" placeholder="שם מנה או מרכיב" value="${state.query.replace(/"/g, '&quot;')}" autocomplete="off">
+      </div>
+    </div>
+    <div id="results"></div>
+  `;
+  const results = app.querySelector('#results');
+
+  function paint(){
+    const list = filterRecipes(key);
+    if (!list.length) {
+      const msg = key === "fav" && !state.ing && !state.fast && !state.query.trim()
+        ? "עוד לא שמרת מנות. לחץ על הלב ליד מנה כדי לשמור אותה כאן."
+        : "לא נמצאו מנות שמתאימות לסינון.";
+      results.innerHTML = `<div class="empty"><p>${msg}</p>
+        ${key === "fav" ? `<a class="btn primary" href="#/list/all">לכל המנות</a>` : `<button type="button" class="btn primary" id="clearBtn">נקה סינון</button>`}</div>`;
+      const c = results.querySelector('#clearBtn');
+      if (c) c.addEventListener('click', () => {
+        state.query = ""; state.ing = ""; state.fast = false; renderList(key);
+      });
+      return;
+    }
+    results.innerHTML = `<p class="count" role="status">${list.length} מנות</p><ul class="cards">${list.map(cardHTML).join('')}</ul>`;
+    results.querySelectorAll('.heart').forEach(btn => btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.fav);
+      if (favs.has(id)) favs.delete(id); else favs.add(id);
+      saveFavs();
+      if (key === "fav") { paint(); return; }
+      const on = favs.has(id), r = byId(id);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.setAttribute('aria-label', (on ? 'הסר מהמועדפים' : 'הוסף למועדפים') + ': ' + r.name);
+      btn.innerHTML = heartIco(on);
+    }));
+  }
+
+  app.querySelector('#ingSel').addEventListener('change', e => { state.ing = e.target.value; paint(); });
+  app.querySelector('#fastBtn').addEventListener('click', e => {
+    state.fast = !state.fast; e.currentTarget.setAttribute('aria-pressed', String(state.fast)); paint();
+  });
+  app.querySelector('#listSearch').addEventListener('input', e => { state.query = e.target.value; paint(); });
+
+  paint();
+  finish(cat.name + " | מה אוכלים?");
+}
+
+function checkItem(rid, kind, i, text, numbered){
+  const id = `${rid}:${kind}:${i}`;
+  return `
+    <li>
+      <label class="check">
+        <input type="checkbox" data-check="${id}" ${checks[id] ? 'checked' : ''}>
+        ${numbered ? `<span class="num" aria-hidden="true">${i + 1}</span>` : `<span class="box" aria-hidden="true">${ico("check")}</span>`}
+        <span class="txt">${text}</span>
+      </label>
+    </li>`;
+}
+
+function renderRecipe(id){
+  const r = byId(id);
+  if (!r) { location.hash = "#/"; return; }
+  const fav = favs.has(r.id);
+  const c = catOf(r);
+  app.innerHTML = `
+    <a class="back glass" href="#/" id="backLink">${ico("back")} חזרה</a>
+    <div class="rhero c-${c.key}">
+      <div class="txt">
+        <h1 class="screen-title">${r.name}</h1>
+        <span class="pill">${ico("clock")} ${r.time}</span>
+      </div>
+      ${ring(r.cal)}
+    </div>
+    <p class="note" style="margin-top:.6rem">הקלוריות הן הערכה למנה גדולה אחת. המד מלא ב־${METER_MAX} ${KCAL}.</p>
+    <p class="awake" id="awake" hidden>${ico("bolt")} המסך יישאר דלוק בזמן ההכנה</p>
+
+    <h2>מה צריך <small>(לחץ כדי לסמן מה כבר הוצאת)</small></h2>
+    <ul class="checklist">${r.ing.map((t, i) => checkItem(r.id, "ing", i, t, false)).join('')}</ul>
+
+    <h2>איך מכינים <small>(לחץ על שלב כשסיימת אותו)</small></h2>
+    <ol class="checklist steps">${r.steps.map((t, i) => checkItem(r.id, "step", i, t, true)).join('')}</ol>
+    <div id="doneMsg"></div>
+
+    <div class="tip glass">${ico("bulb")}<span>${r.tip}</span></div>
+
+    <div class="actions">
+      <button type="button" class="btn fav block" id="favBtn" aria-pressed="${fav}">${heartIco(fav)} ${fav ? 'שמור במועדפים' : 'הוסף למועדפים'}</button>
+      <button type="button" class="btn block" id="resetBtn">נקה את כל הסימונים</button>
+    </div>
+  `;
+
+  const doneMsg = app.querySelector('#doneMsg');
+  function updateDone(){
+    const all = r.steps.every((_, i) => checks[`${r.id}:step:${i}`]);
+    doneMsg.innerHTML = all ? `<div class="done" role="status">${ico("check")} הכל מוכן. בתיאבון!</div>` : "";
+  }
+  app.querySelectorAll('[data-check]').forEach(inp => inp.addEventListener('change', () => {
+    checks[inp.dataset.check] = inp.checked; updateDone();
+  }));
+  app.querySelector('#favBtn').addEventListener('click', e => {
+    if (favs.has(r.id)) favs.delete(r.id); else favs.add(r.id);
+    saveFavs();
+    const on = favs.has(r.id);
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    e.currentTarget.innerHTML = `${heartIco(on)} ${on ? 'שמור במועדפים' : 'הוסף למועדפים'}`;
+  });
+  app.querySelector('#resetBtn').addEventListener('click', () => {
+    app.querySelectorAll('[data-check]').forEach(inp => { inp.checked = false; delete checks[inp.dataset.check]; });
+    updateDone();
+  });
+  app.querySelector('#backLink').addEventListener('click', e => {
+    if (window.__navigated) { e.preventDefault(); history.back(); }
+  });
+  updateDone();
+  finish(r.name + " | מה אוכלים?");
+  lockScreen().then(ok => { const n = app.querySelector('#awake'); if (ok && n) n.hidden = false; });
+}
+
+/* ======================= סלולר: ניווט תחתון, מסך דלוק, התקנה ======================= */
+const navInner = document.getElementById('navInner');
+navInner.innerHTML = [["home","#/","בית","home"],["all","#/list/all","כל המנות","grid"],["fav","#/list/fav","מועדפים","heart"]]
+  .map(([k, h, l, i]) => `<a class="navitem" data-nav="${k}" href="${h}">${ico(i)}<span>${l}</span></a>`).join('');
+navInner.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { state.query = ""; state.ing = ""; state.fast = false; }));
+function setNav(key){
+  navInner.querySelectorAll('a').forEach(a => {
+    if (a.dataset.nav === key) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+}
+const isField = el => el && el.matches && el.matches('input[type=search],input[type=text],select');
+document.addEventListener('focusin', e => { if (isField(e.target)) document.body.classList.add('kb'); });
+document.addEventListener('focusout', () => setTimeout(() => { if (!isField(document.activeElement)) document.body.classList.remove('kb'); }, 120));
+
+let wake = null;
+async function lockScreen(){
+  try {
+    if ('wakeLock' in navigator) {
+      wake = await navigator.wakeLock.request('screen');
+      wake.addEventListener('release', () => { wake = null; });
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
+function unlockScreen(){ try { if (wake) { wake.release(); wake = null; } } catch(e){} }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && location.hash.startsWith('#/r/')) lockScreen();
+});
+
+let installEvent = null;
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+const installDismissed = () => { try { return localStorage.getItem('wg_install_dismissed') === '1'; } catch(e){ return false; } };
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; renderInstall(); });
+window.addEventListener('appinstalled', () => { installEvent = null; renderInstall(); });
+function renderInstall(){
+  const box = document.getElementById('install');
+  if (!box) return;
+  if (isStandalone() || installDismissed()) { box.hidden = true; return; }
+  let html = "";
+  if (installEvent) {
+    html = `<p>אפשר להוסיף את האפליקציה למסך הבית ולפתוח אותה כמו כל אפליקציה, גם בלי אינטרנט.</p>
+      <div class="row"><button type="button" class="btn primary" id="doInstall">הוסף למסך הבית</button><button type="button" class="btn" id="noInstall">לא עכשיו</button></div>`;
+  } else if (isIOS()) {
+    html = `<p>להוספה למסך הבית: לחץ על כפתור השיתוף ${ico("share")} בתחתית הדפדפן ובחר "הוסף למסך הבית".</p>
+      <div class="row"><button type="button" class="btn" id="noInstall">הבנתי</button></div>`;
+  }
+  if (!html) { box.hidden = true; return; }
+  box.innerHTML = html; box.hidden = false;
+  const no = box.querySelector('#noInstall');
+  if (no) no.addEventListener('click', () => { try { localStorage.setItem('wg_install_dismissed', '1'); } catch(e){} box.hidden = true; });
+  const yes = box.querySelector('#doInstall');
+  if (yes) yes.addEventListener('click', async () => {
+    try { installEvent.prompt(); await installEvent.userChoice; } catch(e){}
+    installEvent = null; renderInstall();
+  });
+}
+
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+}
+
+/* ======================= ניווט ======================= */
+let firstRoute = true;
+function route(){
+  const parts = (location.hash || "#/").replace(/^#\/?/, "").split("/");
+  if (!firstRoute) window.__navigated = true;
+  firstRoute = false;
+  unlockScreen();
+  if (parts[0] === "list" && parts[1]) { setNav(parts[1] === "all" ? "all" : parts[1] === "fav" ? "fav" : ""); renderList(parts[1]); }
+  else if (parts[0] === "r" && parts[1]) { setNav(""); renderRecipe(parts[1]); }
+  else { setNav("home"); renderHome(); }
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
